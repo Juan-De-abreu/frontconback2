@@ -1,0 +1,252 @@
+.bg-menu{
+  background-color: #2f3640
+}
+
+.sidebar-brand .brand-link .brand-image {
+  max-height: 100px;
+}
+.sidebar-brand{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Ajusta la altura según sea necesario */
+}
+.app{
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* Fija el footer al final */
+  min-height: 90vh; /* Altura total de la vista */
+}
+.wrapper {
+  display: flex; /* Usar flexbox para alinear los elementos */
+  flex-direction: column; /* Cambiar a columna para permitir footer al final */
+  height: 100vh; /* Altura total de la vista */
+}
+
+.content-wrapper {
+  display: flex; /* Usar flexbox para alinear Aside y Content */
+  flex: 1; /* Permitir que este contenedor ocupe el espacio restante */
+}
+
+.aside {
+  width: 250px; /* Ancho del aside */
+  background-color: #f8f9fa; /* Color de fondo del aside */
+}
+
+.content {
+  flex: 1; /* El contenido ocupará el espacio restante */
+  padding: 20px; /* Espaciado interno */
+ /* background-color: #ffffff; /* Color de fondo del contenido */
+}
+
+.footer {
+  background-color: #343a40; /* Color de fondo del footer */
+  color: white; /* Color del texto del footer */
+  text-align: center; /* Centrar el texto */
+  padding: 10px; /* Espaciado interno */
+}
+/* navegfacion */
+.nav-treeview {
+  display: none;
+  transition: max-height 0.3s ease, opacity 0.3s ease; 
+}
+.nav-treeview.show {
+  display: block;
+}
+/* color de iconos*/
+.icon-blue {
+  color: #2ecc71; /* Cambia 'blue' por el color que desees */
+}
+
+
+/* styles.css */
+.p-datatable .p-datatable-tbody > tr > td {
+  border-bottom: 1px solid #dee2e6; /* Cambia el color según tu preferencia */
+  padding: 9px;
+  font-size: 12px;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* Cambia el color según tu preferencia */
+  cursor: pointer;
+}
+
+
+
+
+.text-encabezado {
+  font-size: 14px;
+  text-align: center !important;
+
+}
+
+.p-column-header-content{
+
+  text-align: center !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+
+
+}
+
+.navbar-nav{
+  flex-wrap: wrap;
+}
+
+.message {
+  white-space: pre-line; /* Esto respeta los saltos de línea */
+}
+
+
+
+/* paginacion */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+.pagination li {
+  margin: 0 5px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff; /* Texto blanco para contraste en modo oscuro */
+  background-color: #333333; /* Fondo oscuro */
+  transition: all 0.3s ease;
+}
+.pagination li:hover {
+  background-color: #444444; /* Cambio sutil al pasar el mouse */
+  text-decoration: none;
+}
+.pagination li.active {
+  background-color: #007bff; /* Color destacado para la página activa */
+  color: #ffffff; /* Texto blanco para mayor contraste */
+  font-weight: bold;
+}
+.pagination li.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #222222; /* Fondo más oscuro para elementos deshabilitados */
+}
+.pagination .previous,
+.pagination .next {
+  background-color: #2a2a2a; /* Fondo ligeramente diferente para Anterior/Siguiente */
+  padding: 8px 16px; /* Más espacio para hacerlos más clicables */
+}
+.pagination .previous:hover,
+.pagination .next:hover {
+  background-color: #3a3a3a; /* Cambio sutil al pasar el mouse */
+}
+.pagination .previous a,
+.pagination .next a {
+  text-decoration: none; /* Elimina cualquier subrayado */
+  color: inherit; /* Hereda el color del texto del botón */
+}
+
+
+.info-box {
+   
+
+    /* Sombra suave (estilo PrimeReact) */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    /* Espaciado interno */
+    padding: 16px;
+    margin-bottom: 16px;
+
+    
+}
+
+.info-box:hover {
+    /* Elevación al pasar el mouse */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    cursor: pointer;
+}
+
+
+@media (max-width: 600px) {
+  .p-datatable {
+      width: 100%; /* Make the table full width on small screens */
+      font-size: 9px; /* Adjust font size for better readability */
+  }
+  .p-datatable .p-column-header {
+      display: none; /* Optionally hide headers on very small screens */
+  }
+  .content{
+    padding: 0px;
+  }
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 4px;
+    font-size: 8px;
+  }
+  input{
+    font-size: 8px;
+    padding: 2px;
+  }
+ 
+}
+ #pr_id_21_content{
+    padding: 3px;
+   
+  }
+  .app-sidebar {
+    min-height: 100vh;
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.2s;
+    border-radius: 4px;
+    margin: 2px 8px;
+    padding: 8px 12px;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.nav-icon {
+    width: 20px;
+    text-align: center;
+}
+
+.rotate-90 {
+    transform: rotate(90deg);
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+/* Submenús */
+.nav-treeview {
+    padding-left: 20px;
+}
+
+.nav-treeview .nav-link {
+    padding-left: 35px;
+}
+
+/* Efecto para el logo */
+.brand-image {
+    transition: transform 0.3s;
+}
+
+.brand-image:hover {
+    transform: scale(1.05);
+}
