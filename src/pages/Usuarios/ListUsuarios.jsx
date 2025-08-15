@@ -42,7 +42,8 @@ const ListUsuarios = () => {
     const roles = [
         { label: 'Operador', value: 'operador' },
         { label: 'Admin', value: 'admin' },
-        { label: 'Vendedor', value: 'vendedor' }
+        { label: 'Vendedor', value: 'vendedor' },
+        { label: 'Cliente', value: 'cliente' }
     ];
 
     // Obtener datos
@@ -124,6 +125,10 @@ const rolBodyTemplate = (rowData) => {
             label = 'Vendedor';
             severity = 'success';
             break;
+        case 'cliente':
+            label = 'Cliente';
+            severity = 'danger';
+            break;
         default:
             label = 'Desconocido';
             severity = 'secondary';
@@ -176,7 +181,7 @@ const rolBodyTemplate = (rowData) => {
             errors.password = 'La contraseña es obligatoria y debe tener al menos 6 caracteres.';
         }
 
-        if (!['operador', 'admin', 'vendedor'].includes(formData.rol)) {
+        if (!['operador', 'admin', 'vendedor','cliente'].includes(formData.rol)) {
             errors.rol = 'Rol inválido.';
         }
 

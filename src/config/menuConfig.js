@@ -21,7 +21,7 @@ const menuConfig = [
     submenu: [
       { label: 'Listado', route: '/listplataformas' }
     ],
-    roles: ['admin', 'operador', 'vendedor']
+    roles: ['admin', 'operador', 'vendedor','cliente']
   },
   {
     label: 'Juegos',
@@ -29,7 +29,7 @@ const menuConfig = [
     submenu: [
       { label: 'Listado', route: '/listjuegos' }
     ],
-    roles: ['admin', 'operador', 'vendedor']
+    roles: ['admin', 'operador', 'vendedor','cliente']
   },
   {
     label: 'Usuarios',
@@ -53,7 +53,7 @@ const menuConfig = [
     submenu: [
       { label: 'Subir Tablas', route: '/subirtablas' }
     ],
-    roles: ['admin', 'operador', 'vendedor']
+    roles: ['admin']
   }
 ];
 
