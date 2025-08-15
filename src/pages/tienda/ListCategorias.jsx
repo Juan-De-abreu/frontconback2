@@ -7,37 +7,34 @@ import { Dialog } from 'primereact/dialog';
 import { Tag } from 'primereact/tag';
 import { InputText } from 'primereact/inputtext';
 import { FilterMatchMode } from 'primereact/api';
-import { confirmDialog } from 'primereact/confirmdialog';
-import { ConfirmDialog } from 'primereact/confirmdialog';
-import { Toast } from 'primereact/toast'; // agregar para notificaciones
-import { InputTextarea } from "primereact/inputtextarea";
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
+import { Toast } from 'primereact/toast';
 
-const API = 'http://localhost:3002/api/generos';
-const ListGeneros = () => {
+const API = 'http://localhost:3002/api/categorias';
+
+const ListCategorias = () => {
     const [datos, setDatos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [visible, setVisible] = useState(false);
-    const [selectedGenero, setSelectedGenero] = useState(null);
+    const [selectedCategoria, setSelectedCategoria] = useState(null);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS }
     });
     const dt = useRef(null);
 
-    // agregar para el manejo del los datos del formulario
-     const [visibleForm, setVisibleForm] = useState(false); // Para crear/editar
+    const [visibleForm, setVisibleForm] = useState(false);
     const [formData, setFormData] = useState({
         nombre: '',
-        descripcion: '',
         idestatus: 1
     });
     const [formErrors, setFormErrors] = useState({});
 
-    // para editar
     const [editingId, setEditingId] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
 
-    const toast = useRef(null); // Para notificaciones
+    const toast = useRef(null);
+
     const getDatos = async () => {
         try {
             const response = await fetch(API);
@@ -57,30 +54,30 @@ const ListGeneros = () => {
         getDatos();
     }, []);
 
-    const handleViewDetails = (genero) => {
-        setSelectedGenero(genero);
+    const handleViewDetails = (categoria) => {
+        setSelectedCategoria(categoria);
         setVisible(true);
     };
 
     const actionBodyTemplate = (rowData) => {
         return (
-             <div className="d-flex gap-2 justify-content-center">
-                <Button 
-                    icon="pi pi-eye" 
-                    className="p-button-rounded p-button-info" 
+            <div className="d-flex gap-2 justify-content-center">
+                <Button
+                    icon="pi pi-eye"
+                    className="p-button-rounded p-button-info"
                     onClick={() => handleViewDetails(rowData)}
                     tooltip="Ver detalles"
                 />
-                <Button 
-                    icon="pi pi-pencil" 
-                    className="p-button-rounded p-button-warning" 
-                    onClick={() => editGenero(rowData)}
+                <Button
+                    icon="pi pi-pencil"
+                    className="p-button-rounded p-button-warning"
+                    onClick={() => editCategoria(rowData)}
                     tooltip="Editar"
                     aria-label="Editar"
                 />
-                 <Button 
-                    icon="pi pi-trash" 
-                    className="p-button-rounded p-button-danger" 
+                <Button
+                    icon="pi pi-trash"
+                    className="p-button-rounded p-button-danger"
                     onClick={() => confirmDelete(rowData)}
                     tooltip="Eliminar"
                     aria-label="Eliminar"
@@ -91,19 +88,19 @@ const ListGeneros = () => {
 
     const statusBodyTemplate = (rowData) => {
         return (
-            <Tag 
-                value={rowData.idestatus === 1 ? 'Activo' : 'Inactivo'} 
-                severity={rowData.idestatus === 1 ? 'success' : 'danger'} 
+            <Tag
+                value={rowData.idestatus === 1 ? 'Activo' : 'Inactivo'}
+                severity={rowData.idestatus === 1 ? 'success' : 'danger'}
             />
         );
     };
 
     const modalFooter = (
-        <Button 
-            label="Cerrar" 
-            icon="pi pi-times" 
-            onClick={() => setVisible(false)} 
-            className="p-button-text" 
+        <Button
+            label="Cerrar"
+            icon="pi pi-times"
+            onClick={() => setVisible(false)}
+            className="p-button-text"
         />
     );
 
@@ -113,54 +110,41 @@ const ListGeneros = () => {
         _filters['global'].value = value;
         setFilters(_filters);
     };
-    //************************************ funciones para crear un nuevo genero *****************************************/
-    //Manejar cambios en el formulario
+
+    // Manejo cambios formulario
     const onInputChange = (e, field) => {
         const value = e.target.value;
         setFormData(prev => ({ ...prev, [field]: value }));
-        // Limpiar error si existe
         if (formErrors[field]) {
             setFormErrors(prev => ({ ...prev, [field]: null }));
         }
     };
 
-    //Validar formulario
+    // Validar formulario para categorías (sin descripción)
     const validate = () => {
-    const errors = {};
+        const errors = {};
 
-    // Validación para nombre
-    if (!formData.nombre || formData.nombre.trim() === '') {
-        errors.nombre = 'El nombre es obligatorio.';
-    } else if (/^\d+$/.test(formData.nombre.trim())) {
-        errors.nombre = 'El nombre no puede contener solo números.';
-    } else if (formData.nombre.trim().length > 100) {
-        errors.nombre = 'El nombre no puede tener más de 100 caracteres.';
-    }
+        if (!formData.nombre || formData.nombre.trim() === '') {
+            errors.nombre = 'El nombre es obligatorio.';
+        } else if (/^\d+$/.test(formData.nombre.trim())) {
+            errors.nombre = 'El nombre no puede contener solo números.';
+        } else if (formData.nombre.trim().length > 50) { // varchar(50)
+            errors.nombre = 'El nombre no puede tener más de 50 caracteres.';
+        }
 
-    // Validación para descripción
-    if (!formData.descripcion || formData.descripcion.trim() === '') {
-        errors.descripcion = 'La descripción es obligatoria.';
-    } else if (/^\d+$/.test(formData.descripcion.trim())) {
-        errors.descripcion = 'La descripción no puede contener solo números.';
-    } else if (formData.descripcion.trim().length > 100) {
-        errors.descripcion = 'La descripción no puede tener más de 100 caracteres.';
-    }
+        if (![1, 2].includes(Number(formData.idestatus))) {
+            errors.idestatus = 'Estado inválido.';
+        }
 
-    // Validación para idestatus
-    if (![1, 2].includes(Number(formData.idestatus))) {
-        errors.idestatus = 'Estado inválido.';
-    }
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
 
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-};
-
-    //funcion para crear y modificar el genero 
-    const saveGenero = async () => {
+    const saveCategoria = async () => {
         if (!validate()) return;
 
         const method = isEditing ? 'PUT' : 'POST';
-          const url = isEditing ? `${API}/${editingId}` : API; 
+        const url = isEditing ? `${API}/${editingId}` : API;
 
         try {
             const response = await fetch(url, {
@@ -170,7 +154,6 @@ const ListGeneros = () => {
                 },
                 body: JSON.stringify({
                     nombre: formData.nombre.trim(),
-                    descripcion: formData.descripcion.trim() || null,
                     idestatus: Number(formData.idestatus)
                 })
             });
@@ -178,19 +161,18 @@ const ListGeneros = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || `No se pudo ${isEditing ? 'editar' : 'crear'} el género`);
+                throw new Error(data.error || `No se pudo ${isEditing ? 'editar' : 'crear'} la categoría`);
             }
 
             setVisibleForm(false);
-            getDatos(); // Refrescar lista
+            getDatos();
             toast.current.show({
                 severity: 'success',
                 summary: 'Éxito',
-                detail: `Género ${isEditing ? 'editado' : 'creado'} correctamente`,
+                detail: `Categoría ${isEditing ? 'editada' : 'creada'} correctamente`,
                 life: 3000
             });
 
-            // Resetear estado de edición
             if (isEditing) setIsEditing(false);
         } catch (err) {
             toast.current.show({
@@ -201,11 +183,10 @@ const ListGeneros = () => {
             });
         }
     };
-    // Función para abrir el modal de creación
+
     const openNew = () => {
         setFormData({
             nombre: '',
-            descripcion: '',
             idestatus: 1
         });
         setFormErrors({});
@@ -213,23 +194,20 @@ const ListGeneros = () => {
         setVisibleForm(true);
     };
 
-
-    //******************* funciones para permitir modificar el genero **************
-    const editGenero = (genero) => {
+    const editCategoria = (categoria) => {
         setFormData({
-            nombre: genero.nombre,
-            descripcion: genero.descripcion || '',
-            idestatus: genero.idestatus
+            nombre: categoria.nombre,
+            idestatus: categoria.idestatus
         });
-        setEditingId(genero.idgenero); // ← Guardamos el ID aquí
+        setEditingId(categoria.idcategoria);
         setIsEditing(true);
         setFormErrors({});
         setVisibleForm(true);
     };
 
-    const deleteGenero = async (genero) => {
+    const deleteCategoria = async (categoria) => {
         try {
-            const response = await fetch(`${API}/${genero.idgenero}`, {
+            const response = await fetch(`${API}/${categoria.idcategoria}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -238,15 +216,14 @@ const ListGeneros = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'No se pudo eliminar el género');
+                throw new Error(errorData.message || 'No se pudo eliminar la categoría');
             }
 
-            // Cerrar diálogo y refrescar
             getDatos();
             toast.current.show({
                 severity: 'success',
                 summary: 'Éxito',
-                detail: 'Género eliminado correctamente',
+                detail: 'Categoría eliminada correctamente',
                 life: 3000
             });
         } catch (err) {
@@ -258,40 +235,38 @@ const ListGeneros = () => {
             });
         }
     };
-    const confirmDelete = (genero) => {
-      
 
+    const confirmDelete = (categoria) => {
         confirmDialog({
-            message: `¿Estás seguro de que deseas eliminar el género "${genero.nombre}"?`,
+            message: `¿Estás seguro de que deseas eliminar la categoría "${categoria.nombre}"?`,
             header: 'Confirmar Eliminación',
             icon: 'pi pi-exclamation-triangle',
             acceptLabel: 'Sí, eliminar',
             rejectLabel: 'No, cancelar',
             acceptClassName: 'p-button-danger',
-            accept: () => deleteGenero(genero),
-            reject: () => {
-                // No hacer nada
-            }
+            accept: () => deleteCategoria(categoria),
+            reject: () => {}
         });
     };
+
     const renderHeader = () => {
         const value = filters['global'] ? filters['global'].value : '';
 
         return (
             <div className="d-flex justify-content-between align-items-center">
-                 <Button
-                    label="Nuevo Género"
+                <Button
+                    label="Nueva Categoría"
                     icon="pi pi-plus"
                     className="p-button-success"
                     onClick={openNew}
                 />
                 <span className="p-input-icon-left mx-2">
                     <i className="pi pi-search mx-1" />
-                    <InputText 
-                        value={value || ''} 
-                        onChange={onGlobalFilterChange} 
-                        placeholder="Buscar... " 
-                        className="w-100 px-4 "
+                    <InputText
+                        value={value || ''}
+                        onChange={onGlobalFilterChange}
+                        placeholder="Buscar..."
+                        className="w-100 px-4"
                     />
                 </span>
             </div>
@@ -304,9 +279,9 @@ const ListGeneros = () => {
         return (
             <div className="text-center py-5">
                 <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
+                    <span className="visually-hidden">Cargando...</span>
                 </div>
-                <p>Cargando Géneros...</p>
+                <p>Cargando Categorías...</p>
             </div>
         );
     }
@@ -314,79 +289,63 @@ const ListGeneros = () => {
     if (error) {
         return (
             <div className="text-center py-5 text-danger">
-                <h4>Error al cargar los Géneros</h4>
+                <h4>Error al cargar las Categorías</h4>
                 <p>{error}</p>
             </div>
         );
     }
 
-    
-
- 
     return (
         <div className="container">
             <Toast ref={toast} />
-            <ConfirmDialog /> 
-            <h4 className="text-center py-4">Lista de Géneros</h4>
+            <ConfirmDialog />
+            <h4 className="text-center py-4">Lista de Categorías</h4>
             <div className="card">
-                <DataTable 
+                <DataTable
                     ref={dt}
-                    value={datos} 
+                    value={datos}
                     paginator rows={10}
                     rowsPerPageOptions={[5, 10, 25]}
-                    dataKey="idgenero"
-                    emptyMessage="No se encontraron géneros."
+                    dataKey="idcategoria"
+                    emptyMessage="No se encontraron categorías."
                     filters={filters}
-                    globalFilterFields={['nombre', 'descripcion']}
+                    globalFilterFields={['nombre']}
                     header={header}
                 >
-                    <Column field="idgenero" header="ID" sortable style={{ width: '10%' }} className="text-center"></Column>
-                    <Column field="nombre" header="Nombre" sortable style={{ width: '30%' }}></Column>
-                    <Column field="descripcion" header="Descripción" style={{ width: '45%' }}></Column>
-                    <Column field="idestatus" header="Estado" body={statusBodyTemplate} sortable style={{ width: '10%' }} className="text-center"></Column>
-                    <Column header="Acciones" body={actionBodyTemplate} style={{ width: '5%' }} className="text-center"></Column>
+                    <Column field="idcategoria" header="ID" sortable style={{ width: '10%' }} className="text-center" />
+                    <Column field="nombre" header="Nombre" sortable style={{ width: '60%' }}/>
+                    <Column field="idestatus" header="Estado" body={statusBodyTemplate} sortable style={{ width: '20%' }} className="text-center" />
+                    <Column header="Acciones" body={actionBodyTemplate} style={{ width: '10%' }} className="text-center" />
                 </DataTable>
             </div>
 
-            <Dialog 
-                visible={visible} 
-                style={{ width: '500px' }} 
-                header="Detalles del Género" 
-                modal 
-                footer={modalFooter} 
+            <Dialog
+                visible={visible}
+                style={{ width: '450px' }}
+                header="Detalles de la Categoría"
+                modal
+                footer={modalFooter}
                 onHide={() => setVisible(false)}
             >
-                {selectedGenero && (
+                {selectedCategoria && (
                     <div className="card p-4">
-                        <div className="card-header">
-                            <div className="py-2">
-                                <h4><strong>ID: </strong>{selectedGenero.idgenero}</h4>
-                            </div>
-                            <div className="py-2">
-                                <h5><strong>Nombre: </strong>{selectedGenero.nombre}</h5>
-                            </div>
-                            <div className="py-2">
-                                <h5><strong>Descripción: </strong>{selectedGenero.descripcion}</h5>
-                            </div>
-                            <div className="py-2">
-                                <div>
-                                    <strong>Estado: </strong>
-                                    <Tag 
-                                        value={selectedGenero.idestatus === 1 ? 'Activo' : 'Inactivo'} 
-                                        severity={selectedGenero.idestatus === 1 ? 'success' : 'danger'} 
-                                    />
-                                </div>
-                            </div>
-                        
+                        <div className="py-2"><h4><strong>ID: </strong>{selectedCategoria.idcategoria}</h4></div>
+                        <div className="py-2"><h5><strong>Nombre: </strong>{selectedCategoria.nombre}</h5></div>
+                        <div className="py-2">
+                            <strong>Estado: </strong>
+                            <Tag
+                                value={selectedCategoria.idestatus === 1 ? 'Activo' : 'Inactivo'}
+                                severity={selectedCategoria.idestatus === 1 ? 'success' : 'danger'}
+                            />
                         </div>
                     </div>
                 )}
             </Dialog>
-            {/* Modal para Crear/Editar */}
+
             <Dialog
                 visible={visibleForm}
-                style={{ width: '450px' }}
-                header={isEditing ? "Editar Género" : "Agregar Género"}
+                style={{ width: '400px' }}
+                header={isEditing ? "Editar Categoría" : "Agregar Categoría"}
                 modal
                 className="p-fluid"
                 footer={
@@ -400,7 +359,7 @@ const ListGeneros = () => {
                         <Button
                             label="Guardar"
                             icon="pi pi-check"
-                            onClick={saveGenero}
+                            onClick={saveCategoria}
                         />
                     </div>
                 }
@@ -415,26 +374,11 @@ const ListGeneros = () => {
                         autoFocus
                         className={formErrors.nombre ? 'p-invalid' : ''}
                     />
-                    {formErrors.nombre && (
-                        <small className="p-error">{formErrors.nombre}</small>
-                    )}
+                    {formErrors.nombre && <small className="p-error">{formErrors.nombre}</small>}
                 </div>
 
                 <div className="field">
-                    <label htmlFor="descripcion">Descripción</label>
-                    <InputTextarea autoResize rows={5} cols={30}
-                        id="descripcion"
-                        value={formData.descripcion}
-                        onChange={(e) => onInputChange(e, 'descripcion')}
-                         className={formErrors.descripcion ? 'p-invalid' : ''}
-                    />
-                    {formErrors.descripcion && (
-                        <small className="p-error">{formErrors.descripcion}</small>
-                    )}
-                </div>
-
-                <div className="field">
-                    <label htmlFor="idestatus">Estado</label>
+                    <label>Estado</label>
                     <div className="form-check">
                         <input
                             type="radio"
@@ -442,7 +386,7 @@ const ListGeneros = () => {
                             name="idestatus"
                             value="1"
                             checked={formData.idestatus === 1}
-                            onChange={(e) => setFormData(prev => ({ ...prev, idestatus: 1 }))}
+                            onChange={() => setFormData(prev => ({ ...prev, idestatus: 1 }))}
                             className="form-check-input"
                         />
                         <label htmlFor="activo" className="form-check-label mx-2">Activo</label>
@@ -454,18 +398,16 @@ const ListGeneros = () => {
                             name="idestatus"
                             value="2"
                             checked={formData.idestatus === 2}
-                            onChange={(e) => setFormData(prev => ({ ...prev, idestatus: 2 }))}
+                            onChange={() => setFormData(prev => ({ ...prev, idestatus: 2 }))}
                             className="form-check-input"
                         />
                         <label htmlFor="inactivo" className="form-check-label mx-2">Inactivo</label>
                     </div>
-                    {formErrors.idestatus && (
-                        <small className="p-error">{formErrors.idestatus}</small>
-                    )}
+                    {formErrors.idestatus && <small className="p-error">{formErrors.idestatus}</small>}
                 </div>
             </Dialog>
         </div>
     )
 }
 
-export default ListGeneros;
+export default ListCategorias;

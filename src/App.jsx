@@ -7,59 +7,87 @@ import Header from './components/Header';
 
 import { UserProvider } from './contexts/UserContext'; // Cambiado a UserProvider
 import LoginForm from './pages/protexted/LoginForm';
+
 import ProtectedRoute from './pages/protexted/ProtectedRoute';
 
 import ListGeneros from './pages/generos/ListGeneros';
-import ListUsuarios from './pages/Usuarios/ListUsuarios';
+import ListUsuarios from './pages/usuarios/ListUsuarios';
 import ListPlataformas from './pages/plataformas/ListPlataformas';
 import ListJuegos from './pages/juegos/ListJuegos';
+
+import ListCategorias from './pages/tienda/ListCategorias';
+import ListProductos from './pages/tienda/ListProductos';
+import ListTienda from './pages/tienda/ListTienda';
 
 // Importación dinámica de los componentes
 const Dashboard = React.lazy(() => import('./pages/dashboard/Dashboard'));
 
+
+const ProtectedLayout = () => (
+
+  <div className="wrapper">
+    <div className="content-wrapper">
+      <Aside />
+      <div className="content">
+        <Header />
+        <Suspense fallback={<div>Cargando...</div>}>
+          <Content />
+        </Suspense>
+        <Footer />
+      </div>
+    </div>
+  </div>
+);
 const App = () => {
   return (
     <UserProvider> {/* Cambiado de CompanyProvider a UserProvider */}
       <BrowserRouter>
-        <Routes>
-        
+       <Routes>
+           {/* Ruta pública */}
+          <Route path="/login" element={<LoginForm />} />
+
+          {/* Rutas protegidas: solo para usuarios autenticados */}
           <Route
-            path="*"
             element={
-             
-                <div className="wrapper">
-                  <div className="content-wrapper">
-                    <Aside />
-                    <div className="content">
-                      <Header />
-                      <Suspense fallback={<div>Cargando...</div>}>
-                        <div className='app'>
-                          <Routes>
-                            <Route path="/" element={<Content />}>
-                              <Route index element={<Dashboard />} />
-                              <Route path="/dashboard" element={<Dashboard />} />
-                              <Route path="/listgeneros" element={<ListGeneros />} />
-                              <Route path="/listplataformas" element={<ListPlataformas />} />
-                              <Route path="/listjuegos" element={<ListJuegos />} />
-                              <Route path="/listusuarios" element={<ListUsuarios />} />
-                              {/* Agrega aquí más rutas según necesites */}
-                            </Route>
-                          </Routes>
-                        </div>
-                      </Suspense>
-                      <Footer />
-                    </div>
-                  </div>
-                </div>
-             
+              <ProtectedRoute>
+                <ProtectedLayout />
+              </ProtectedRoute>
             }
-          />
+          >
+              {/* Todas las rutas hijas están dentro del layout */}
+              <Route path="/" element={<Content />}>
+
+              {/* Solo admin  */}
+              <Route path="dashboard"    element={<ProtectedRoute requiredRol="admin"> <Dashboard />  </ProtectedRoute>}/>
+              <Route path="listusuarios" element={<ProtectedRoute requiredRol="admin"> <ListUsuarios /></ProtectedRoute>}/>
+            
+
+              {/* Solo operador */}
+              <Route path="listcategorias" element={<ProtectedRoute requiredRol="operador"> <ListCategorias /></ProtectedRoute>}/>
+              <Route path="listproductos" element={<ProtectedRoute requiredRol="operador"> <ListProductos /></ProtectedRoute>}/>
+              <Route path="listtienda" element={<ProtectedRoute requiredRol="operador"> <ListTienda /></ProtectedRoute>}/>
 
 
-        </Routes>
+              {/* Estas rutas las ven todos los autenticados (admin y operador) */}
+              <Route path="listgeneros" element={<ListGeneros />} />
+              <Route path="listplataformas" element={<ListPlataformas />} />
+              <Route path="listjuegos" element={<ListJuegos />} />
+
+                
+
+              </Route>
+          </Route>
+          {/* Cualquier otra ruta → login */}
+          <Route path="*" element={<Navigate to="/login" />} />
+       </Routes>   
       </BrowserRouter>
     </UserProvider> 
   );
 };
 
 export default App;
+
+
+
+                             
+  

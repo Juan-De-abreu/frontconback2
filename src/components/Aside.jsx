@@ -11,8 +11,12 @@ import {
   FiList,
 } from 'react-icons/fi';
 
+import { CiShop } from "react-icons/ci";
+import { MdOutlineProductionQuantityLimits } from "react-icons/md";
+
 import { MdDevices } from 'react-icons/md';
 import { FaTag, FaGamepad } from 'react-icons/fa';
+import { BiCategory } from "react-icons/bi";
 
 const Aside = () => {
     const [openMenus, setOpenMenus] = useState({});
@@ -65,12 +69,14 @@ const Aside = () => {
             <div className="sidebar-wrapper">
                 <nav className="mt-2">
                     <ul className="nav nav-pills flex-column">
-                        <li className="nav-item">
-                            <Link to="/" className="nav-link d-flex align-items-center">
-                                <FiHome className="nav-icon me-3" />
-                                <span>Dashboard</span>
-                            </Link>
-                        </li>
+                         {user.rol === 'admin' && (
+                            <li className="nav-item">
+                                <Link to="/dashboard" className="nav-link d-flex align-items-center">
+                                    <FiHome className="nav-icon me-3" />
+                                    <span>Dashboard</span>
+                                </Link>
+                            </li>
+                        )}
                         
                         <li className="nav-item">
                             <a 
@@ -159,7 +165,41 @@ const Aside = () => {
                                 </li>
                             </ul>
                         </li>
-
+                         {user.rol === 'operador' && (
+                        <li className="nav-item">
+                            <a 
+                                href="#" 
+                                className="nav-link d-flex align-items-center justify-content-between"
+                                onClick={(e) => { e.preventDefault(); toggleMenu('tienda'); }}
+                            >
+                                <div className="d-flex align-items-center">
+                                    <CiShop className="nav-icon me-3"/>
+                                    <span>Tienda</span>
+                                </div>
+                                <FiChevronRight className={`transition-all ${openMenus['tienda'] ? 'rotate-90' : ''}`} />
+                            </a>
+                            <ul className={`nav flex-column ps-4 ${openMenus['tienda'] ? 'd-block' : 'd-none'}`}>
+                                <li className="nav-item">
+                                    <Link to="/listcategorias" className="nav-link d-flex align-items-center">
+                                        <BiCategory className="nav-icon me-3" />
+                                        <span>Categorias</span>
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to="/listproductos" className="nav-link d-flex align-items-center">
+                                        <MdOutlineProductionQuantityLimits className="nav-icon me-3" />
+                                        <span>Productos</span>
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to="/listtienda" className="nav-link d-flex align-items-center">
+                                        <MdOutlineProductionQuantityLimits className="nav-icon me-3" />
+                                        <span>Tienda</span>
+                                    </Link>
+                                </li>
+                            </ul>
+                        </li>
+                        )}
                         <li className="nav-item">
                             <a 
                                 href="#" 
